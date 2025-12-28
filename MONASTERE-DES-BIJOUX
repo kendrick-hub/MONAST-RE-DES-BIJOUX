@@ -1,671 +1,338 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  ShoppingBag, 
-  Menu, 
-  X, 
-  ChevronRight, 
-  Truck, 
-  ShieldCheck, 
-  Package, 
-  Phone, 
-  Mail, 
-  Facebook, 
-  Send, 
-  Heart,
-  Star,
-  Search,
-  ArrowRight
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monastère des Bijoux | Boutique de Luxe Burkina Faso</title>
+    
+    <!-- Polices & Icônes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-const App = () => {
-  const [activePage, setActivePage] = useState('accueil');
-  const [selectedCategory, setSelectedCategory] = useState('Tous');
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-
-  // Données des produits
-  const products = [
-    {
-      id: 1,
-      name: "Alliance en acier inoxydable — Élégance et durabilité",
-      price: 30000,
-      category: "Alliances & Mariage",
-      images: [
-        "https://images.unsplash.com/photo-1589674781757-4a5c38202506?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1599508704512-2f19fe9f27d3?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1603561591411-071c789fe391?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1573408302185-1d61595959f7?auto=format&fit=crop&q=80&w=800"
-      ],
-      description: "Messieurs, il est temps de briller avec classe. Cette alliance est le symbole parfait de votre engagement, alliant robustesse et raffinement.",
-      material: "Acier inoxydable",
-      features: ["Résistante à l'eau", "Ne déteint pas", "Hypoallergénique", "Poli miroir ultra brillant"],
-      bonus: "Coffret offert & Livraison gratuite à Ouagadougou",
-      stock: "Limité"
-    },
-    {
-      id: 2,
-      name: "Collier Ayatul Kursi Or",
-      price: 15000,
-      category: "Colliers Spéciaux",
-      images: [
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800"
-      ],
-      description: "Une pièce spirituelle d'une grande finesse, idéale pour porter votre foi avec élégance.",
-      material: "Plaqué Or 18k / Acier",
-      features: ["Gravure laser précise", "Chaîne réglable", "Inoxydable"],
-      bonus: "Coffret offert",
-      stock: "Disponible"
-    },
-    {
-      id: 3,
-      name: "Bracelet Gourmette Homme",
-      price: 18000,
-      category: "Bijoux pour Hommes",
-      images: [
-        "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800"
-      ],
-      description: "Le bracelet incontournable pour l'homme moderne. Design épuré et masculin.",
-      material: "Acier 316L",
-      features: ["Fermoir sécurité", "Finition brossée", "Poids confortable"],
-      bonus: "Livraison rapide",
-      stock: "Limité"
-    },
-    {
-      id: 4,
-      name: "Bague de fiançailles Royale",
-      price: 45000,
-      category: "Bijoux pour Femmes",
-      images: [
-        "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=800"
-      ],
-      description: "Éblouissez votre future épouse avec cette bague d'exception ornée de zircons premium.",
-      material: "Argent pur 925",
-      features: ["Pierres éclatantes", "Taille ajustable", "Brillance éternelle"],
-      bonus: "Coffret luxe offert",
-      stock: "Disponible"
-    }
-  ];
-
-  const categories = [
-    "Tous",
-    "Bijoux pour Hommes",
-    "Bijoux pour Femmes",
-    "Alliances & Mariage",
-    "Colliers Spéciaux"
-  ];
-
-  const filteredProducts = selectedCategory === "Tous" 
-    ? products 
-    : products.filter(p => p.category === selectedCategory);
-
-  // Navigation handlers
-  const openProduct = (product) => {
-    setSelectedProduct(product);
-    setActivePage('detail');
-    window.scrollTo(0,0);
-  };
-
-  const goToHome = () => {
-    setActivePage('accueil');
-    setSelectedProduct(null);
-    window.scrollTo(0,0);
-  };
-
-  const goToShop = (cat = "Tous") => {
-    setSelectedCategory(cat);
-    setActivePage('boutique');
-    window.scrollTo(0,0);
-  };
-
-  // UI Components
-  const Navbar = () => (
-    <nav className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={goToHome}>
-            <span className="text-2xl font-serif font-bold text-violet-900 tracking-tighter">
-              MONASTÈRE <span className="text-violet-600 font-light italic">DES BIJOUX</span>
-            </span>
-          </div>
-          
-          <div className="hidden md:flex space-x-8 text-sm font-medium uppercase tracking-widest text-gray-600">
-            <button onClick={goToHome} className={`hover:text-violet-600 ${activePage === 'accueil' ? 'text-violet-700 font-bold' : ''}`}>Accueil</button>
-            <button onClick={() => goToShop()} className={`hover:text-violet-600 ${activePage === 'boutique' ? 'text-violet-700 font-bold' : ''}`}>Boutique</button>
-            <button onClick={() => setActivePage('about')} className="hover:text-violet-600">À Propos</button>
-            <button onClick={() => setActivePage('contact')} className="hover:text-violet-600">Contact</button>
-          </div>
-
-          <div className="flex items-center space-x-5">
-            <Search size={20} className="text-gray-500 cursor-pointer hover:text-violet-600" />
-            <div className="relative cursor-pointer" onClick={() => goToShop()}>
-              <ShoppingBag size={22} className="text-gray-700" />
-              <span className="absolute -top-1 -right-1 bg-violet-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                {products.length}
-              </span>
-            </div>
-            <button className="md:hidden text-gray-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-100 px-4 py-6 space-y-4 animate-in slide-in-from-top">
-          <button onClick={goToHome} className="block w-full text-left py-2 text-lg font-medium">Accueil</button>
-          <button onClick={() => {goToShop(); setIsMenuOpen(false);}} className="block w-full text-left py-2 text-lg font-medium">Boutique</button>
-          <button onClick={() => {setActivePage('about'); setIsMenuOpen(false);}} className="block w-full text-left py-2 text-lg font-medium">À Propos</button>
-          <button onClick={() => {setActivePage('contact'); setIsMenuOpen(false);}} className="block w-full text-left py-2 text-lg font-medium">Contact</button>
-        </div>
-      )}
-    </nav>
-  );
-
-  const Footer = () => (
-    <footer className="bg-gray-950 text-white pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <div className="space-y-4">
-          <h2 className="text-xl font-serif font-bold">MONASTÈRE DES BIJOUX</h2>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Votre destination de luxe pour des bijoux et accessoires d'exception au Burkina Faso. 
-            Élégance, durabilité et raffinement.
-          </p>
-          <div className="flex space-x-4">
-            <a href="https://web.facebook.com/profile.php?id=61555902554014" target="_blank" className="hover:text-violet-400 transition-colors"><Facebook size={20} /></a>
-            <a href="https://tiktok.com/@monastère%20des%20bijoux" target="_blank" className="hover:text-violet-400 transition-colors flex items-center gap-1 font-bold">TikTok</a>
-          </div>
-        </div>
-        <div>
-          <h3 className="text-lg font-bold mb-6">Liens Rapides</h3>
-          <ul className="space-y-3 text-gray-400 text-sm">
-            <li className="hover:text-white cursor-pointer" onClick={goToHome}>Accueil</li>
-            <li className="hover:text-white cursor-pointer" onClick={() => goToShop()}>Boutique</li>
-            <li className="hover:text-white cursor-pointer" onClick={() => goToShop("Alliances & Mariage")}>Alliances</li>
-            <li className="hover:text-white cursor-pointer" onClick={() => setActivePage('about')}>Notre Histoire</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-bold mb-6">Service Client</h3>
-          <ul className="space-y-3 text-gray-400 text-sm">
-            <li>Livraison à Ouaga (Gratuite)</li>
-            <li>Expédition hors Ouaga</li>
-            <li>Coffret Cadeau Offert</li>
-            <li>Guide des tailles</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-bold mb-6">Nous Contacter</h3>
-          <ul className="space-y-4 text-gray-400 text-sm">
-            <li className="flex items-center gap-3">
-              <Phone size={16} className="text-violet-500" /> +226 71 84 29 02
-            </li>
-            <li className="flex items-center gap-3">
-              <Mail size={16} className="text-violet-500" /> zidakiswendsidaabraham@gmail.com
-            </li>
-            <li className="flex items-center gap-3">
-              <Truck size={16} className="text-violet-500" /> Ouagadougou, Burkina Faso
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-gray-800 mt-16 pt-8 text-center text-gray-500 text-xs">
-        &copy; {new Date().getFullYear()} Monastère des Bijoux. Tous droits réservés. Design by Excellence.
-      </div>
-    </footer>
-  );
-
-  const FloatingWhatsApp = () => (
-    <a 
-      href="https://wa.me/22671842902" 
-      target="_blank" 
-      className="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center animate-bounce-slow"
-    >
-      <Phone size={24} />
-      <span className="absolute right-full mr-3 bg-white text-gray-800 text-xs px-2 py-1 rounded shadow-md whitespace-nowrap hidden md:block border border-gray-100">Contactez-nous</span>
-    </a>
-  );
-
-  // Pages
-  const HomePage = () => (
-    <div className="animate-in fade-in duration-700">
-      {/* Hero Section */}
-      <section className="relative h-[85vh] bg-gray-900 overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=2000" 
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
-          alt="Luxe Bijoux"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent flex items-center">
-          <div className="max-w-7xl mx-auto px-4 w-full">
-            <div className="max-w-2xl space-y-6">
-              <h3 className="text-violet-400 font-bold uppercase tracking-[0.3em] text-sm">Collection Excellence</h3>
-              <h1 className="text-5xl md:text-7xl text-white font-serif leading-tight">
-                Brillez avec <br /> <span className="italic text-violet-200">Élégance & Classe</span>
-              </h1>
-              <p className="text-gray-300 text-lg md:text-xl max-w-lg">
-                Messieurs, Mesdames, découvrez notre collection en acier inoxydable et argent pur, pensée pour sublimer chaque style.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button 
-                  onClick={() => goToShop()}
-                  className="bg-violet-700 hover:bg-violet-800 text-white px-8 py-4 rounded-sm font-bold flex items-center justify-center gap-2 transition-all uppercase text-sm tracking-widest"
-                >
-                  Découvrir la Boutique <ArrowRight size={18} />
-                </button>
-                <button 
-                  onClick={() => goToShop("Alliances & Mariage")}
-                  className="border border-white/30 hover:bg-white/10 text-white px-8 py-4 rounded-sm font-bold transition-all uppercase text-sm tracking-widest"
-                >
-                  Alliances & Mariage
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Grid */}
-      <section className="py-24 bg-white px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4 uppercase tracking-wider">Nos Catégories</h2>
-            <div className="w-20 h-1 bg-violet-600 mx-auto"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.filter(c => c !== "Tous").map((cat, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => goToShop(cat)}
-                className="group relative h-[400px] overflow-hidden cursor-pointer"
-              >
-                <img 
-                  src={`https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=600&sig=${idx}`} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  alt={cat}
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-end p-8">
-                  <h3 className="text-white text-xl font-bold uppercase tracking-widest mb-2">{cat}</h3>
-                  <p className="text-white/80 text-xs flex items-center gap-2">Voir la collection <ChevronRight size={14} /></p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-24 bg-gray-50 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl font-serif font-bold text-gray-900 uppercase tracking-wider">Sélection du Moment</h2>
-              <p className="text-gray-500 mt-2">Découvrez nos pièces les plus convoitées.</p>
-            </div>
-            <button onClick={() => goToShop()} className="text-violet-700 font-bold flex items-center gap-2 border-b-2 border-violet-700 pb-1">Voir tout</button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="py-16 bg-violet-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="bg-white/10 p-4 rounded-full"><Truck size={32} /></div>
-            <h3 className="text-xl font-bold">Livraison Rapide</h3>
-            <p className="text-white/70 text-sm italic">Gratuite à Ouagadougou. Expédition sécurisée partout ailleurs.</p>
-          </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="bg-white/10 p-4 rounded-full"><Package size={32} /></div>
-            <h3 className="text-xl font-bold">Coffret Offert</h3>
-            <p className="text-white/70 text-sm italic">Parce que chaque bijou mérite un écrin à sa hauteur.</p>
-          </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="bg-white/10 p-4 rounded-full"><ShieldCheck size={32} /></div>
-            <h3 className="text-xl font-bold">Qualité Premium</h3>
-            <p className="text-white/70 text-sm italic">Acier inoxydable et argent pur certifiés. Ne déteint pas.</p>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-
-  const ProductCard = ({ product }) => (
-    <div 
-      className="group bg-white rounded-sm overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
-      onClick={() => openProduct(product)}
-    >
-      <div className="relative h-72 overflow-hidden">
-        <img 
-          src={product.images[0]} 
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.stock === "Limité" && (
-            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 uppercase rounded-sm">Stock Limité</span>
-          )}
-          <span className="bg-violet-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded-sm">{product.category}</span>
-        </div>
-        <button className="absolute bottom-4 right-4 bg-white/90 p-2 rounded-full text-violet-600 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-          <Heart size={18} />
-        </button>
-      </div>
-      <div className="p-5 space-y-2">
-        <h3 className="text-gray-800 font-bold line-clamp-1">{product.name}</h3>
-        <p className="text-violet-700 font-black text-lg">{product.price.toLocaleString()} FCFA</p>
-        <div className="flex items-center gap-1 text-yellow-400">
-          <Star size={12} fill="currentColor" />
-          <Star size={12} fill="currentColor" />
-          <Star size={12} fill="currentColor" />
-          <Star size={12} fill="currentColor" />
-          <Star size={12} fill="currentColor" />
-          <span className="text-gray-400 text-[10px] ml-1">(12 avis)</span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const BoutiquePage = () => (
-    <div className="py-12 bg-gray-50 min-h-screen animate-in fade-in">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-serif font-bold text-gray-900 mb-4">La Boutique</h1>
-          <div className="flex flex-wrap justify-center gap-2 mt-6">
-            {categories.map((cat, idx) => (
-              <button 
-                key={idx}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === cat 
-                  ? "bg-violet-700 text-white shadow-md" 
-                  : "bg-white text-gray-600 hover:bg-violet-100"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const DetailPage = () => {
-    const [activeImg, setActiveImg] = useState(selectedProduct.images[0]);
-    const [qty, setQty] = useState(1);
-    const [formData, setFormData] = useState({
-      name: '',
-      phone: '',
-      location: 'Ouagadougou',
-      payment: 'Orange Money'
-    });
-
-    const handleOrder = (type) => {
-      const message = `Bonjour Monastère des Bijoux, je souhaite commander :
-Produit : ${selectedProduct.name}
-Quantité : ${qty}
-Lieu : ${formData.location}
-Paiement : ${formData.payment}
-Nom : ${formData.name}
-WhatsApp : ${formData.phone}`;
-      
-      if (type === 'whatsapp') {
-        window.open(`https://wa.me/22671842902?text=${encodeURIComponent(message)}`, '_blank');
-      } else {
-        alert("Commande validée avec succès ! Notre équipe vous contactera dans quelques minutes.");
-      }
-    };
-
-    return (
-      <div className="py-12 bg-white animate-in slide-in-from-right duration-500">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center text-sm text-gray-400 mb-8 gap-2">
-            <span onClick={goToHome} className="hover:text-violet-600 cursor-pointer">Accueil</span>
-            <ChevronRight size={14} />
-            <span onClick={() => goToShop()} className="hover:text-violet-600 cursor-pointer">Boutique</span>
-            <ChevronRight size={14} />
-            <span className="text-gray-900 font-medium">{selectedProduct.category}</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Gallery Section */}
-            <div className="space-y-6">
-              <div className="aspect-square rounded-lg overflow-hidden border border-gray-100 bg-gray-50 shadow-inner group">
-                <img src={activeImg} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-125 cursor-zoom-in" alt="Main" />
-              </div>
-              <div className="grid grid-cols-5 gap-4">
-                {selectedProduct.images.map((img, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setActiveImg(img)}
-                    className={`aspect-square rounded border-2 overflow-hidden cursor-pointer transition-all ${activeImg === img ? 'border-violet-600 scale-105' : 'border-transparent opacity-70 hover:opacity-100'}`}
-                  >
-                    <img src={img} className="w-full h-full object-cover" alt="Thumb" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Info & Form Section */}
-            <div className="space-y-8">
-              <div>
-                <span className="text-violet-600 font-bold uppercase tracking-[0.2em] text-xs">{selectedProduct.category}</span>
-                <h1 className="text-4xl font-serif font-bold text-gray-900 mt-2 leading-tight">{selectedProduct.name}</h1>
-                <div className="flex items-center gap-4 mt-4">
-                  <span className="text-3xl font-black text-violet-800">{selectedProduct.price.toLocaleString()} FCFA</span>
-                  {selectedProduct.stock === "Limité" && <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded font-bold uppercase">Attention : Stock Limité</span>}
-                </div>
-              </div>
-
-              <div className="prose prose-sm text-gray-600">
-                <p className="text-base leading-relaxed italic border-l-4 border-violet-100 pl-4 py-2">{selectedProduct.description}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-8 py-6 border-y border-gray-100">
-                <div>
-                  <h4 className="font-bold text-sm uppercase text-gray-900 mb-3">Caractéristiques</h4>
-                  <ul className="text-sm space-y-2 text-gray-600">
-                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-violet-600 rounded-full"></div> <b>Matière:</b> {selectedProduct.material}</li>
-                    {selectedProduct.features.map((f, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-violet-600 rounded-full"></div> {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm uppercase text-gray-900 mb-3">Expédition & Cadeaux</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    🎁 <strong>{selectedProduct.bonus}</strong> <br />
-                    🚚 Livraison partout au Burkina Faso sous 24h-48h.
-                  </p>
-                </div>
-              </div>
-
-              {/* Order Form */}
-              <div className="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm space-y-5">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <ShoppingBag className="text-violet-600" /> Formulaire de Commande Directe
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Nom complet</label>
-                    <input 
-                      type="text" 
-                      placeholder="Votre nom..." 
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-600 outline-none"
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Numéro WhatsApp</label>
-                    <input 
-                      type="tel" 
-                      placeholder="+226 ..." 
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-600 outline-none"
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Lieu de livraison</label>
-                    <select 
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-600 outline-none bg-white"
-                      onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    >
-                      <option>Ouagadougou (Gratuit)</option>
-                      <option>Bobo-Dioulasso</option>
-                      <option>Koudougou</option>
-                      <option>Autres (Précisez par message)</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-gray-500">Quantité</label>
-                    <div className="flex">
-                      <button onClick={() => setQty(Math.max(1, qty-1))} className="px-4 py-2 border bg-white">-</button>
-                      <span className="flex-1 text-center py-2 border-y bg-white font-bold">{qty}</span>
-                      <button onClick={() => setQty(qty+1)} className="px-4 py-2 border bg-white">+</button>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase text-gray-500">Mode de Paiement</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Orange Money', 'Moov Money', 'Espèces'].map(m => (
-                      <button 
-                        key={m}
-                        onClick={() => setFormData({...formData, payment: m})}
-                        className={`p-3 border rounded-lg text-sm font-bold transition-all ${formData.payment === m ? 'bg-violet-700 text-white border-violet-700 shadow-md' : 'bg-white text-gray-600'}`}
-                      >
-                        {m === 'Espèces' ? 'Cash à la livraison' : m}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                  <button 
-                    onClick={() => handleOrder('whatsapp')}
-                    className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-bold transition-all shadow-lg"
-                  >
-                    <Phone size={20} /> Commander via WhatsApp
-                  </button>
-                  <button 
-                    onClick={() => handleOrder('valider')}
-                    className="flex items-center justify-center gap-2 bg-violet-800 hover:bg-violet-900 text-white py-4 rounded-lg font-bold transition-all shadow-lg uppercase tracking-widest text-sm"
-                  >
-                    Valider la commande
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const ContactPage = () => (
-    <div className="py-24 bg-white animate-in zoom-in duration-500">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16">
-        <div className="space-y-8">
-          <h1 className="text-5xl font-serif font-bold text-gray-900">Restons en Contact</h1>
-          <p className="text-gray-600 leading-relaxed text-lg">
-            Une question ? Un besoin particulier pour un événement ? Notre équipe est à votre disposition pour vous conseiller les meilleurs bijoux.
-          </p>
-          <div className="space-y-6">
-            <div className="flex items-center gap-6 group">
-              <div className="bg-violet-100 p-4 rounded-full text-violet-700 group-hover:bg-violet-700 group-hover:text-white transition-all"><Phone size={24} /></div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase">WhatsApp & Appels</p>
-                <p className="text-xl font-bold text-gray-800">+226 71 84 29 02</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-6 group">
-              <div className="bg-violet-100 p-4 rounded-full text-violet-700 group-hover:bg-violet-700 group-hover:text-white transition-all"><Mail size={24} /></div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase">Email Professionnel</p>
-                <p className="text-xl font-bold text-gray-800">zidakiswendsidaabraham@gmail.com</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-6 group">
-              <div className="bg-violet-100 p-4 rounded-full text-violet-700 group-hover:bg-violet-700 group-hover:text-white transition-all"><Send size={24} /></div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase">Localisation</p>
-                <p className="text-xl font-bold text-gray-800">Ouagadougou, Burkina Faso</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 shadow-sm">
-          <h2 className="text-2xl font-bold mb-6">Envoyez un message rapide</h2>
-          <form className="space-y-4">
-            <input type="text" placeholder="Votre Nom" className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-600" />
-            <input type="email" placeholder="Votre Email" className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-600" />
-            <textarea placeholder="Votre message..." rows="5" className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-600"></textarea>
-            <button className="w-full bg-violet-800 text-white py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-violet-900 transition-all shadow-md">Envoyer le message</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="font-sans text-gray-900 bg-white min-h-screen selection:bg-violet-200">
-      <Navbar />
-      
-      <main>
-        {activePage === 'accueil' && <HomePage />}
-        {activePage === 'boutique' && <BoutiquePage />}
-        {activePage === 'detail' && selectedProduct && <DetailPage />}
-        {activePage === 'contact' && <ContactPage />}
-        {activePage === 'about' && (
-          <div className="py-24 max-w-4xl mx-auto px-4 text-center space-y-8 animate-in fade-in">
-            <h1 className="text-5xl font-serif font-bold italic text-violet-900">Notre Histoire</h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Le <strong>Monastère des Bijoux</strong> est né d'une passion pour le raffinement et le désir d'offrir des accessoires qui durent toute une vie. 
-              Basés à Ouagadougou, nous sélectionnons méticuleusement des pièces en acier inoxydable haute qualité et en argent pur pour vous accompagner dans vos plus beaux moments.
-            </p>
-            <div className="grid grid-cols-2 gap-4 mt-12">
-              <img src="https://images.unsplash.com/photo-1573408302185-1d61595959f7?auto=format&fit=crop&q=80&w=600" className="rounded-lg shadow-lg" alt="Workshop" />
-              <img src="https://images.unsplash.com/photo-1599508704512-2f19fe9f27d3?auto=format&fit=crop&q=80&w=600" className="rounded-lg shadow-lg" alt="Display" />
-            </div>
-            <button onClick={() => goToShop()} className="bg-violet-800 text-white px-10 py-4 rounded-full font-bold">Voir la collection</button>
-          </div>
-        )}
-      </main>
-
-      <Footer />
-      <FloatingWhatsApp />
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
+    <style>
         body { font-family: 'Montserrat', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+        .violet-monastere { background-color: #4c1d95; }
+        .text-violet-monastere { color: #4c1d95; }
+        .bg-gold { background-color: #d4af37; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .whatsapp-float {
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #25d366; color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000;
+            animation: pulse 2s infinite;
         }
-        .animate-bounce-slow { animation: bounce-slow 3s infinite; }
-      `}} />
-    </div>
-  );
-};
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
 
-export default App;
+    <!-- BARRE DE NAVIGATION -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <div class="flex flex-col cursor-pointer" onclick="showPage('accueil')">
+                <span class="text-xl md:text-2xl font-serif font-bold tracking-tighter text-violet-900 uppercase">Monastère <span class="italic text-violet-600 font-light lowercase">des bijoux</span></span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-semibold text-xs uppercase tracking-widest text-gray-600">
+                <a href="#" onclick="showPage('accueil')" class="hover:text-violet-600 transition">Accueil</a>
+                <a href="#" onclick="showPage('boutique')" class="hover:text-violet-600 transition">Boutique</a>
+                <a href="#" onclick="showPage('contact')" class="hover:text-violet-600 transition">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="showPage('boutique')" class="relative p-2">
+                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-violet-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">3</span>
+                </button>
+                <button class="md:hidden" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+            </div>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-50 p-4 border-b">
+            <a href="#" onclick="showPage('accueil')" class="block py-2 font-bold uppercase">Accueil</a>
+            <a href="#" onclick="showPage('boutique')" class="block py-2 font-bold uppercase">Boutique</a>
+            <a href="#" onclick="showPage('contact')" class="block py-2 font-bold uppercase">Contact</a>
+        </div>
+    </nav>
+
+    <!-- PAGE ACCUEIL -->
+    <div id="page-accueil" class="page">
+        <!-- Hero Section -->
+        <section class="relative h-[80vh] flex items-center">
+            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=1500" class="absolute inset-0 w-full h-full object-cover brightness-50" alt="Hero">
+            <div class="relative max-w-7xl mx-auto px-4 w-full">
+                <div class="max-w-xl fade-in">
+                    <h3 class="text-gold font-bold uppercase tracking-[0.4em] text-sm mb-4 text-violet-300">Collection Excellence</h3>
+                    <h1 class="text-5xl md:text-7xl text-white font-serif font-bold mb-6">L'art de porter la <span class="italic text-violet-200">Perfection</span></h1>
+                    <p class="text-white/80 text-lg mb-8 italic">Messieurs, Mesdames, découvrez notre collection en acier inoxydable et argent pur pour sublimer votre style.</p>
+                    <button onclick="showPage('boutique')" class="bg-violet-700 hover:bg-violet-800 text-white px-10 py-4 font-bold uppercase text-sm tracking-widest shadow-xl transition-all">Explorer la Boutique</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catégories -->
+        <section class="py-20 max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-serif font-bold text-center mb-16 uppercase tracking-widest">Nos Collections</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="group relative h-96 overflow-hidden cursor-pointer" onclick="filterCategory('Bijoux pour Hommes')">
+                    <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="Hommes">
+                    <div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-xl font-bold uppercase">Pour Hommes</h3>
+                    </div>
+                </div>
+                <div class="group relative h-96 overflow-hidden cursor-pointer" onclick="filterCategory('Bijoux pour Femmes')">
+                    <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="Femmes">
+                    <div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-xl font-bold uppercase">Pour Femmes</h3>
+                    </div>
+                </div>
+                <div class="group relative h-96 overflow-hidden cursor-pointer" onclick="filterCategory('Alliances & Mariage')">
+                    <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="Mariage">
+                    <div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-xl font-bold uppercase">Alliances</h3>
+                    </div>
+                </div>
+                <div class="group relative h-96 overflow-hidden cursor-pointer" onclick="filterCategory('Colliers Spéciaux')">
+                    <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="Speciaux">
+                    <div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-xl font-bold uppercase">Religieux & Spéciaux</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- PAGE BOUTIQUE -->
+    <div id="page-boutique" class="hidden page py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <h1 class="text-4xl font-serif font-bold text-center mb-4">La Galerie des Bijoux</h1>
+            <p id="current-category" class="text-center text-violet-600 font-bold uppercase tracking-widest mb-10 text-sm">Tous nos produits</p>
+            
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Les produits seront injectés ici par JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE DETAIL PRODUIT -->
+    <div id="page-detail" class="hidden page py-12">
+        <div class="max-w-7xl mx-auto px-4" id="detail-content">
+            <!-- Injecté par JS -->
+        </div>
+    </div>
+
+    <!-- PAGE CONTACT -->
+    <div id="page-contact" class="hidden page py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-serif font-bold mb-10">Contactez le Monastère</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 shadow-sm">
+                    <i data-lucide="phone" class="w-10 h-10 mx-auto mb-4 text-violet-600"></i>
+                    <h4 class="font-bold">WhatsApp</h4>
+                    <p class="text-gray-500">+226 71 84 29 02</p>
+                </div>
+                <div class="bg-white p-8 shadow-sm">
+                    <i data-lucide="mail" class="w-10 h-10 mx-auto mb-4 text-violet-600"></i>
+                    <h4 class="font-bold">Email</h4>
+                    <p class="text-gray-500">zidakiswendsidaabraham@gmail.com</p>
+                </div>
+                <div class="bg-white p-8 shadow-sm">
+                    <i data-lucide="truck" class="w-10 h-10 mx-auto mb-4 text-violet-600"></i>
+                    <h4 class="font-bold">Lieu</h4>
+                    <p class="text-gray-500">Ouagadougou, BF</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <footer class="bg-gray-950 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-6">
+            <h2 class="text-2xl font-serif font-bold uppercase tracking-widest">Monastère des Bijoux</h2>
+            <p class="text-gray-400 max-w-md mx-auto italic">"Le luxe à votre portée. Qualité garantie, éclat éternel."</p>
+            <div class="flex justify-center space-x-6 text-gray-400">
+                <a href="https://web.facebook.com/profile.php?id=61555902554014" target="_blank" class="hover:text-white">Facebook</a>
+                <a href="https://tiktok.com/@monastère des bijoux" target="_blank" class="hover:text-white">TikTok</a>
+            </div>
+            <p class="text-[10px] text-gray-600 uppercase pt-8">&copy; 2024 Monastère des Bijoux. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Flottant -->
+    <a href="https://wa.me/22671842902" target="_blank" class="whatsapp-float">
+        <i data-lucide="phone" class="w-8 h-8"></i>
+    </a>
+
+    <!-- SCRIPTS -->
+    <script>
+        // DONNÉES PRODUITS
+        const products = [
+            {
+                id: 1,
+                name: "Alliance en acier inoxydable — Élégance et durabilité",
+                price: 30000,
+                category: "Alliances & Mariage",
+                img: "https://images.unsplash.com/photo-1589674781757-4a5c38202506?auto=format&fit=crop&q=80&w=800",
+                desc: "Messieurs, il est temps de briller avec classe. Résistante à l'eau, ne déteint pas.",
+                material: "Acier Inoxydable 316L",
+                stock: "Limité"
+            },
+            {
+                id: 2,
+                name: "Collier Ayatul Kursi - Argent Pur",
+                price: 15000,
+                category: "Colliers Spéciaux",
+                img: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800",
+                desc: "Gravure laser de haute précision. Une pièce spirituelle unique.",
+                material: "Argent Pur 925",
+                stock: "Disponible"
+            },
+            {
+                id: 3,
+                name: "Gourmette Homme Robuste",
+                price: 12500,
+                category: "Bijoux pour Hommes",
+                img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800",
+                desc: "Le style masculin à l'état pur. Inaltérable.",
+                material: "Acier Inoxydable",
+                stock: "Disponible"
+            },
+            {
+                id: 4,
+                name: "Bague de Fiançaille Princesse",
+                price: 45000,
+                category: "Bijoux pour Femmes",
+                img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800",
+                desc: "L'éclat d'un diamant, la durabilité du Monastère.",
+                material: "Zircon & Argent",
+                stock: "Disponible"
+            }
+        ];
+
+        // GESTION NAVIGATION
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            document.getElementById('mobile-menu').classList.add('hidden');
+            window.scrollTo(0,0);
+            if(pageId === 'boutique') renderProducts(products);
+        }
+
+        function toggleMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // AFFICHAGE PRODUITS
+        function renderProducts(items) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = items.map(p => `
+                <div class="bg-white border hover:shadow-2xl transition-all cursor-pointer group" onclick="showProductDetail(${p.id})">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        ${p.stock === 'Limité' ? '<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-1 font-bold">STOCK LIMITÉ</span>' : ''}
+                    </div>
+                    <div class="p-4 space-y-2">
+                        <p class="text-[10px] text-violet-600 font-bold uppercase">${p.category}</p>
+                        <h3 class="font-bold text-gray-800 line-clamp-1 uppercase text-sm">${p.name}</h3>
+                        <p class="text-violet-800 font-black text-xl">${p.price.toLocaleString()} FCFA</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            showPage('boutique');
+            document.getElementById('current-category').innerText = cat;
+            const filtered = products.filter(p => p.category === cat);
+            renderProducts(filtered);
+        }
+
+        // AFFICHAGE DETAIL
+        function showProductDetail(id) {
+            const product = products.find(p => p.id === id);
+            showPage('detail');
+            const detail = document.getElementById('detail-content');
+            detail.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 fade-in">
+                    <div>
+                        <img src="${product.img}" class="w-full aspect-square object-cover rounded shadow-2xl">
+                        <div class="grid grid-cols-4 gap-2 mt-4">
+                             <img src="${product.img}" class="opacity-50 border border-violet-600 rounded">
+                             <div class="bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 italic">Photo 2</div>
+                             <div class="bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 italic">Photo 3</div>
+                             <div class="bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400 italic">Photo 4</div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-violet-600 font-bold uppercase tracking-widest text-xs">${product.category}</span>
+                            <h1 class="text-3xl font-serif font-bold mt-2 uppercase">${product.name}</h1>
+                            <p class="text-3xl font-black text-violet-900 mt-2">${product.price.toLocaleString()} FCFA <span class="text-xs text-gray-400 font-normal italic">/ la paire</span></p>
+                        </div>
+                        
+                        <div class="p-4 bg-violet-50 border-l-4 border-violet-600 text-gray-600 italic">
+                            "${product.desc}"
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <p><b>Matière :</b> ${product.material}</p>
+                            <p><b>Stock :</b> ${product.stock}</p>
+                            <p><b>Résistance :</b> Étanche</p>
+                            <p><b>Peau :</b> Hypoallergénique</p>
+                        </div>
+
+                        <div class="bg-gray-900 text-white p-6 rounded-lg space-y-4">
+                            <h3 class="font-bold border-b border-white/20 pb-2">FORMULAIRE DE COMMANDE</h3>
+                            <div class="space-y-3">
+                                <input type="text" id="order-name" placeholder="Nom Complet" class="w-full p-3 bg-white/10 border border-white/20 rounded outline-none focus:border-white">
+                                <input type="tel" id="order-whatsapp" placeholder="Numéro WhatsApp" class="w-full p-3 bg-white/10 border border-white/20 rounded outline-none focus:border-white">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <select id="order-loc" class="bg-white/10 border border-white/20 p-3 rounded">
+                                        <option>Ouagadougou (Gratuit)</option>
+                                        <option>Hors Ouaga</option>
+                                    </select>
+                                    <select id="order-pay" class="bg-white/10 border border-white/20 p-3 rounded">
+                                        <option>Orange Money</option>
+                                        <option>Moov Money</option>
+                                        <option>Espèces</option>
+                                    </select>
+                                </div>
+                                <button onclick="sendOrder('${product.name}')" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded font-bold uppercase tracking-widest transition shadow-lg">Commander via WhatsApp</button>
+                                <button onclick="alert('Commande enregistrée !')" class="w-full bg-violet-600 hover:bg-violet-700 text-white py-4 rounded font-bold uppercase tracking-widest transition">Valider la commande</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function sendOrder(pName) {
+            const name = document.getElementById('order-name').value;
+            const wa = document.getElementById('order-whatsapp').value;
+            const loc = document.getElementById('order-loc').value;
+            const pay = document.getElementById('order-pay').value;
+
+            if(!name || !wa) {
+                alert("Veuillez remplir votre nom et numéro WhatsApp");
+                return;
+            }
+
+            const msg = `Bonjour Monastère des Bijoux ! Je souhaite commander :\n\n- Produit : ${pName}\n- Client : ${name}\n- WhatsApp : ${wa}\n- Lieu : ${loc}\n- Paiement : ${pay}`;
+            window.open(`https://wa.me/22671842902?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // Initialisation
+        window.onload = () => {
+            lucide.createIcons();
+            showPage('accueil');
+        };
+    </script>
+</body>
+</html>
